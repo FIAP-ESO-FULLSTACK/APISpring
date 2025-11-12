@@ -1,49 +1,52 @@
 package models;
 
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import services.ConnectivityChecker;
+import services.DataUpdater;
 
 /**
- * Service para verificar conexão com o Oracle Database e a execução de consultas simples.
- * <p>Esta classe aproveita a injeção do {@code DataSource} configurado
- * automaticamente pelo Spring Boot, lendo as propriedades {@code spring.datasource.*}
- * no {@code application.properties}.</p>
+ * Gerencia o acesso ao Oracle Database usando {@code JdbcTemplate}.
+ * <p>Implementa {@link ConnectivityChecker} para testar a conexão e {@link DataUpdater} para comandos DML.</p>
  */
 @Service
-public class OracleConnection {
+public class OracleConnection implements ConnectivityChecker, DataUpdater {
+    private static final Logger logger = LoggerFactory.getLogger(OracleConnection.class);
 
-    /**
-     * O objeto DataSource, injetado pelo Spring, que gerencia
-     * o pool de conexões com o banco de dados.
-     */
-    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
-    /**
-     * Construtor para injeção de dependência do DataSource.
-     *  @param dataSource O DataSource configurado via application.properties.
-     */
     @Autowired
-    public OracleConnection(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public OracleConnection(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    /**
-     * Tenta obter uma conexão do pool e fecha-a imediatamente, simulando
-     * a execução de uma consulta simples.
-     *  <p>Utiliza a estrutura try-catch para garantir que a {@code Connection}
-     * seja fechada e retornada ao pool, mesmo que ocorra uma exceção.</p>
-     *  @see DataSource#getConnection()
-     */
-    public void queryExecute() {
-        try (Connection connection = dataSource.getConnection()) {
-            System.out.println("Conexão realizada com sucesso!");
-            //TODO: adicionar
-        } catch (SQLException e) {
-            System.out.println( "Erro ao conectar!");
+    @Override
+    public boolean testConnection() {
+        try {
+            jdbcTemplate.execute("SELECT 1 FROM DUAL");
+            logger.info("Conexão com Oracle é válida.");
+            return true;
+        } catch (Exception e) {
+            logger.error("Erro ao testar conexão com Oracle. Verifique a URL e credenciais no application.properties.", e);
+            return false;
+        }
+    }
+
+    @Override
+    public int executeUpdate(String query, Object... args) {
+        try {
+            int affectedRows = jdbcTemplate.update(query, args);
+
+            logger.info("Comando SQL seguro executado. Linhas afetadas: {}", affectedRows);
+
+            return affectedRows;
+        } catch (Exception e) {
+            logger.error("Falha ao executar comando SQL seguro. Query: {}", query, e);
+            throw e;
         }
     }
 }
