@@ -1,4 +1,4 @@
-package services;
+package com.esofiap.globalsolution.services;
 
 /**
  * Define o contrato para serviços de verificação de conectividade com banco de dados.

@@ -1,4 +1,4 @@
-package services;
+package com.esofiap.globalsolution.services;
 
 /**
  * Interface que define a execução segura de comandos de modificação de dados (DML).
