@@ -1,4 +1,4 @@
-package models;
+package com.esofiap.globalsolution.models;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import services.ConnectivityChecker;
-import services.DataUpdater;
+import com.esofiap.globalsolution.services.ConnectivityChecker;
+import com.esofiap.globalsolution.services.DataUpdater;
 
 /**
  * Gerencia o acesso ao Oracle Database usando {@code JdbcTemplate}.
