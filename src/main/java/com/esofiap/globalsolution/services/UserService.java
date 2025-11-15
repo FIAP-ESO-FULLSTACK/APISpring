@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// Recomendação: Em um projeto real, você usaria o Spring Security (BCryptPasswordEncoder)
-// Para simplificar aqui, usaremos o logger, mas isso NÃO é seguro.
-// Você precisaria adicionar a dependência spring-boot-starter-security.
 
 /**
  * Serviço de aplicação responsável pela lógica de negócio de Usuários.
