@@ -2,11 +2,11 @@ package com.esofiap.globalsolution.services;
 
 import com.esofiap.globalsolution.dto.UserRegistrationRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Serviço de aplicação responsável pela lógica de negócio de Usuários.
@@ -16,14 +16,19 @@ import org.slf4j.LoggerFactory;
 public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final DataUpdater dataUpdater;
+    private final JdbcTemplate jdbcTemplate;
     private final String userSchema;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserService(DataUpdater dataUpdater,
-                       @Value("${app.oracle.default-schema}") String defaultSchema) {
-        this.dataUpdater = dataUpdater;
+    /**
+     * Construtor atualizado para injetar o PasswordEncoder
+     */
+    public UserService(JdbcTemplate jdbcTemplate,
+                       @Value("${app.oracle.default-schema}") String defaultSchema,
+                       PasswordEncoder passwordEncoder) {
+        this.jdbcTemplate = jdbcTemplate;
         this.userSchema = defaultSchema.toUpperCase();
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -33,27 +38,25 @@ public class UserService {
      */
     public int registerNewUser(UserRegistrationRequest request) {
 
-        String encodedPassword = request.senha();
-
-        logger.warn("AVISO: A senha está sendo armazenada como um texto prefixado para demonstração. Use BCryptPasswordEncoder em produção.");
+        // --- FAZENDO O HASH DA SENHA ---
+        String encodedPassword = passwordEncoder.encode(request.senha());
 
         // 2. Monta a Query SQL Segura
-        // NOTA: Os nomes das colunas e da tabela devem ser ajustados para o seu banco Oracle.
         String sql = String.format(
                 "INSERT INTO %s.USUARIO (NOME, EMAIL, SENHA_HASH, DATA_CADASTRO) VALUES (?, ?, ?, SYSDATE)",
                 this.userSchema
         );
 
-        // 3. Executa o comando DML usando o DataUpdater (PreparedStatement)
-        int affectedRows = dataUpdater.executeUpdate(
+        // 3. Executa o comando DML usando o JdbcTemplate
+        int affectedRows = jdbcTemplate.update(
                 sql,
                 request.nome(),
                 request.email(),
-                encodedPassword
+                encodedPassword // <-- Enviando o hash
         );
 
         if (affectedRows == 1) {
-            logger.info("Usuário cadastrado com sucesso: {}", request.email());
+            logger.info("Usuário cadastrado com sucesso (com hash): {}", request.email());
         } else {
             logger.error("Falha na persistência do cadastro. Linhas afetadas: {}", affectedRows);
         }

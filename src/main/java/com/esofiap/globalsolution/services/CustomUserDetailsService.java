@@ -1,6 +1,5 @@
 package com.esofiap.globalsolution.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final DataQuery dataQuery;
     private final String userSchema;
 
-    @Autowired
     public CustomUserDetailsService(DataQuery dataQuery,
                                     @Value("${app.oracle.default-schema}") String defaultSchema) {
         this.dataQuery = dataQuery;
