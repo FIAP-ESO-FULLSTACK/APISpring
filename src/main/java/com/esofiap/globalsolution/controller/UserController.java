@@ -2,7 +2,6 @@ package com.esofiap.globalsolution.controller;
 
 import com.esofiap.globalsolution.dto.UserRegistrationRequest;
 import com.esofiap.globalsolution.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +23,6 @@ public class UserController {
     /**
      * Construtor para injeção de dependência do UserService.
      */
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }

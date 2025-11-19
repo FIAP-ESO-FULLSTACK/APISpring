@@ -1,7 +1,6 @@
 package com.esofiap.globalsolution.controller;
 
 import com.esofiap.globalsolution.services.ConnectivityChecker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,6 @@ public class ConnectionController {
      * Construtor para injeção de dependência.
      * @param connectionChecker A interface de verificação de conectividade.
      */
-    @Autowired
     public ConnectionController(ConnectivityChecker connectionChecker) {
         this.connectionChecker = connectionChecker;
     }
