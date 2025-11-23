@@ -1,0 +1,176 @@
+{
+  "info": {
+    "_postman_id": "e04fbc9a-61b3-4ba9-9a6c-62a6b826466f",
+    "name": "API Spring Boot - Oracle",
+    "description": "Coleção de chamadas principais da API (health check, metadados, cadastro e autenticação).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health check banco",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/status/db-teste",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "status",
+            "db-teste"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Listar tabelas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/metadata/tables?owner={{defaultOwner}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "metadata",
+            "tables"
+          ],
+          "query": [
+            {
+              "key": "owner",
+              "value": "{{defaultOwner}}",
+              "description": "Schema a consultar (opcional)."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Consultar dados da tabela",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/metadata/data/{{tableName}}?owner={{defaultOwner}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "metadata",
+            "data",
+            "{{tableName}}"
+          ],
+          "query": [
+            {
+              "key": "owner",
+              "value": "{{defaultOwner}}",
+              "description": "Schema a consultar (opcional)."
+            }
+          ]
+        }
+      },
+      "description": "Retorna 204 se a tabela estiver vazia."
+    },
+    {
+      "name": "Registrar usuário",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"nome\": \"Fulano da Silva\",\n    \"email\": \"fulano@dominio.com\",\n    \"senha\": \"senhaForte123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/users/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Login (gera sessão)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "usuario@dominio.com",
+              "type": "text",
+              "description": "Email cadastrado."
+            },
+            {
+              "key": "password",
+              "value": "senhaForte123",
+              "type": "text",
+              "description": "Senha cadastrada."
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "description": "Postman armazenará o cookie JSESSIONID; use-o nas chamadas protegidas."
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "logout"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "defaultOwner",
+      "value": "RM554327"
+    },
+    {
+      "key": "tableName",
+      "value": "USUARIO"
+    }
+  ]
+}
